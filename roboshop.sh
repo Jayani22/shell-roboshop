@@ -26,7 +26,7 @@ do
             "Comment": "Updating record set"
             ,"Changes": [{
             "Action"                 : "UPSERT"
-		      "ResourceRecordSet"    : {
+		    , "ResourceRecordSet"    : {
 		            "Name"			 : "'$RECORD_NAME'"
 		            "Type"			 : "A"
 		            "TTL"			 : 1
