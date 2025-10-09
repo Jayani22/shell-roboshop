@@ -59,9 +59,6 @@ VALIDATE $? "Unzip user"
 mvn clean package &>>$LOG_FILE
 mv target/shipping-1.0.jar shipping.jar &>>$LOG_FILE
 
-npm install &>>$LOG_FILE
-VALIDATE $? "Install dependencies"
-
 cp $SCRIPT_DIR/shipping.service /etc/systemd/system/shipping.service
 VALIDATE $? "Copy systemctl service"
 
