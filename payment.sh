@@ -30,7 +30,7 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
 }
 
 ######### NODEJS ##########
-dnf install python3 gcc python3-devel -y &&>LOG_FILE
+dnf install python3 gcc python3-devel -y &>>$LOG_FILE
 VALIDATE $? "Installing python"
 
 id roboshop &>>$LOG_FILE
@@ -41,7 +41,7 @@ else
     echo -e "User already exist .... $Y SKIPPING $N"
 fi
 
-mkdir -p /app 
+mkdir -p /app &>>$LOG_FILE
 VALIDATE $? "Creating app directory"
 
 curl -L -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOG_FILE
@@ -50,13 +50,13 @@ VALIDATE $? "Downloading payment application"
 cd /app 
 VALIDATE $? "Changing to app directory"
 
-rm -rf /app/*
+rm -rf /app/* &>>$LOG_FILE
 VALIDATE $? "Removing existing code"
 
 unzip /tmp/payment.zip &>>$LOG_FILE
 VALIDATE $? "Unzip payment"
 
-pip3 install -r requirements.txt &&>LOG_FILE
+pip3 install -r requirements.txt &>>$LOG_FILE
 
 cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service
 VALIDATE $? "Copy systemctl service"
