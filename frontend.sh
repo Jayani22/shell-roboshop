@@ -44,7 +44,7 @@ systemctl enable nginx &>>$LOG_FILE
 systemctl start nginx
 VALIDATE $? "Starting nginx"
 
-rm -rf /usr/share/nging/html/*
+rm -rf /usr/share/nginx/html/*
 
 curl -o /tmp/frontend.zip https://roboshop-artifacts.s3.amazonaws.com/frontend-v3.zip &>>$LOG_FILE
 
