@@ -28,13 +28,13 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
     fi
 }
 
-dnf install mysql-server -y
+dnf install mysql-server -y &>>LOG_FILE
 VALIDATE $? "Installing MYSQL server"
 
-systemctl enable mysqld
+systemctl enable mysqld &>>LOG_FILE
 VALIDATE $? "Enabling MYSQL server"
 
-systemctl start mysqld
+systemctl start mysqld &>>LOG_FILE
 VALIDATE $? "Starting MYSQL server"
 
 mysql_secure_installation --set-root-pass RoboShop@1
