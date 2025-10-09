@@ -9,7 +9,6 @@ N="\e[0m"
 LOGS_FOLDER="/var/log/shell-roboshop"
 SCRIPT_NAME=$( echo $0 | cut -d "." -f1 )
 SCRIPT_DIR=$PWD
-MONGODB_HOST=mongodb.jayani23.fun
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 
 mkdir -p $LOGS_FOLDER
@@ -29,29 +28,27 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
     fi
 }
 
-######### NODEJS ##########
+##### NodeJS ####
 dnf module disable nodejs -y &>>$LOG_FILE
-VALIDATE $? "Disabling nodejs"
-
-dnf module enable nodejs:20 -y &>>$LOG_FILE
-VALIDATE $? "Enabling nodejs version 20"
-
+VALIDATE $? "Disabling NodeJS"
+dnf module enable nodejs:20 -y  &>>$LOG_FILE
+VALIDATE $? "Enabling NodeJS 20"
 dnf install nodejs -y &>>$LOG_FILE
-VALIDATE $? "Installing nodejs"
+VALIDATE $? "Installing NodeJS"
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
     VALIDATE $? "Creating system user"
 else
-    echo -e "user already exist .... $Y SKIPPING $N"
+    echo -e "User already exist ... $Y SKIPPING $N"
 fi
 
-mkdir -p /app 
+mkdir -p /app
 VALIDATE $? "Creating app directory"
 
-curl -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/user-v3.zip &>>$LOG_FILE
-VALIDATE $? "Downloading user application"
+curl -o /tmp/cart.zip https://roboshop-artifacts.s3.amazonaws.com/cart-v3.zip &>>$LOG_FILE
+VALIDATE $? "Downloading cart application"
 
 cd /app 
 VALIDATE $? "Changing to app directory"
@@ -60,7 +57,7 @@ rm -rf /app/*
 VALIDATE $? "Removing existing code"
 
 unzip /tmp/cart.zip &>>$LOG_FILE
-VALIDATE $? "Unzip user"
+VALIDATE $? "unzip cart"
 
 npm install &>>$LOG_FILE
 VALIDATE $? "Install dependencies"
@@ -70,7 +67,7 @@ VALIDATE $? "Copy systemctl service"
 
 systemctl daemon-reload
 systemctl enable cart &>>$LOG_FILE
-VALIDATE $? "Enabling cart"
+VALIDATE $? "Enable cart"
 
 systemctl restart cart
-VALIDATE $? "Restarting cart"
+VALIDATE $? "Restarted cart"
