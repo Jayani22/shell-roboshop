@@ -12,6 +12,7 @@ SCRIPT_DIR=$PWD
 MONGODB_HOST=mongodb.jayani23.fun
 LOG_FILE="$LOGS_FOLDER/$SCRIPT_NAME.log" # /var/log/shell-script/16-logs.log
 MYSQL_HOST=mysql.jayani23.fun
+
 mkdir -p $LOGS_FOLDER
 echo "Script started executed at: $(date)" | tee -a $LOG_FILE
 
@@ -29,41 +30,35 @@ VALIDATE(){ # functions receive inputs through args just like shell script args
     fi
 }
 
-######### NODEJS ##########
 dnf install python3 gcc python3-devel -y &>>$LOG_FILE
-VALIDATE $? "Installing python"
 
 id roboshop &>>$LOG_FILE
 if [ $? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOG_FILE
     VALIDATE $? "Creating system user"
 else
-    echo -e "User already exist .... $Y SKIPPING $N"
+    echo -e "User already exist ... $Y SKIPPING $N"
 fi
 
-mkdir -p /app &>>$LOG_FILE
+mkdir -p /app
 VALIDATE $? "Creating app directory"
 
-curl -L -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOG_FILE
+curl -o /tmp/payment.zip https://roboshop-artifacts.s3.amazonaws.com/payment-v3.zip &>>$LOG_FILE
 VALIDATE $? "Downloading payment application"
 
 cd /app 
 VALIDATE $? "Changing to app directory"
 
-rm -rf /app/* &>>$LOG_FILE
+rm -rf /app/*
 VALIDATE $? "Removing existing code"
 
 unzip /tmp/payment.zip &>>$LOG_FILE
-VALIDATE $? "Unzip payment"
+VALIDATE $? "unzip payment"
 
 pip3 install -r requirements.txt &>>$LOG_FILE
 
 cp $SCRIPT_DIR/payment.service /etc/systemd/system/payment.service
-VALIDATE $? "Copy systemctl service"
-
 systemctl daemon-reload
-systemctl enable payment &>>$LOG_FILE
-VALIDATE $? "Enabling payment"
+systemctl enable payment  &>>$LOG_FILE
 
-systemctl start payment
-VALIDATE $? "Starting payment"
+systemctl restart payment
